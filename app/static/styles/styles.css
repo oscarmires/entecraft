@@ -11,6 +11,12 @@ html {
     box-sizing: inherit;
 }
 
+input {
+    -webkit-border-radius:0;
+    border-radius:0;
+    color: black;
+}
+
 body {
     /* font-family: 'Minecraft', sans-serif; */
     /* font-family: 'Space Mono', monospace; */
