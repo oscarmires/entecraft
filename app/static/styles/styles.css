@@ -1,0 +1,84 @@
+@import url('http://fonts.cdnfonts.com/css/minecraft-4');
+@import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+
+html {
+    box-sizing: border-box;
+    font-size: 18px;
+}
+
+*, *:before, *:after {
+    box-sizing: inherit;
+}
+
+body {
+    /* font-family: 'Minecraft', sans-serif; */
+    /* font-family: 'Space Mono', monospace; */
+    font-family: 'VT323', monospace;
+}
+
+h1, h2 {
+}
+
+h2 {
+    font-size: 1.2rem;
+}
+
+h3 {
+    font-size: 1rem;
+}
+
+.main-wrapper {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 1rem;
+}
+
+/*
+    Instrucciones de uso
+*/
+.server-url {
+    border: 2px solid black;
+    padding: 0 0.5rem;
+}
+
+/*
+    Estado del servidor
+*/
+.status-area {
+    width: 100%;
+    padding: 0 1rem;
+}
+
+.status-text {
+    margin: 0.2rem 0;
+}
+
+#password {
+    margin: 1rem 0;
+    border: 2px solid black;
+    height: 2rem;
+    font-size: 1.7rem;
+}
+
+#wrong-password {
+    color: red;
+    margin: 0.2rem 0;
+    display: none;
+}
+
+#submit {
+    padding: 0.4rem;
+    font-size: 1.5rem;
+    background-color: white;
+    border-radius: 0;
+    border: 3px solid black;
+}
+
+#submit:hover {
+    cursor: pointer;
+    background-color: #000000;
+    color: white;
+    border: 3px solid black;
+}
+

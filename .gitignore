@@ -1,0 +1,7 @@
+# created by virtualenv automatically
+python3-env
+
+.DS_Store
+.idea
+
+.env

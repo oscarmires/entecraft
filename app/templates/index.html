@@ -1,0 +1,135 @@
+{% extends 'base.html' %}
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+    <h1>ENTECRAFT</h1>
+    <p>Servidor de Minecraft. Exclusivo para whitelisters.</p>
+
+    <h2>Instrucciones de uso</h2>
+    <ol>
+        <li>Verifique el estado del servidor: si se encuentra en "stopped (code: 80)", haga click en el botón
+            "Reiniciar".
+        </li>
+        <li>Copie la siguiente diercción: <span class="server-url">{{ server_url }}</span></li>
+        <li>Abra su aplicación de Minecraft y pegue la dirección en Multiplayer > Direct connection</li>
+        <li>Click en "Join server"</li>
+    </ol>
+    <h3>(Alternativa) Agregue el servidor</h3>
+    <ol>
+        <li>Dirígase a Multiplayer > Add server</li>
+        <li>En "Server name" escriba: Entecraft</li>
+        <li>En "Server address" pegue la dirección: <span class="server-url">{{ server_url }}</span></li>
+        <li>Click en "Done"</li>
+    </ol>
+
+    <h2>Estado del servidor</h2>
+    <div class="status-area">
+        <p>&#9888; Recargue la página periódicamente para observar cambios en el estado.</p>
+        <p class="status-text">Code: <span id="aws-status-code">{{ server_data['statusCode'] }}</span></p>
+        <p class="status-text">Descripción: <span id="aws-status-name">{{ server_data['statusName'] }}</span> *</p>
+        <p>* Se refiere al estado de la instancia en AWS (la infraestructura), pero no el de la aplicación Minecraft en
+            sí. El estado 'running' no garantiza que la aplicación Minecraft esté en funcionamiento. Podría estarse
+            iniciando o teniendo dificultades.</p>
+
+        <form id="restart-form">
+            <label for="password">Contraseña para reiniciar:</label><br>
+            <span id="wrong-password">Contraseña incorrecta.</span>
+            <input type="password" id="password" name="password" value=""><br>
+            <input type="submit" id="submit" value="Reiniciar">
+        </form>
+    </div>
+
+    <div class="problems-area">
+        <h2>Solución de problemas</h2>
+        <ul style="list-style: square">
+            <li>
+                <h3>"Incompatible client! Please use [version]"</h3>
+                <p>En este caso es necesario solicitar al administrador que actualice el servidor. Este proceso duraría
+                    aproximadamente 10 minutos.</p>
+            </li>
+            <li>
+                <h3>No es posible jugar desde la app Minecraft PE (dispositivos móviles) o consolas como Xbox</h3>
+                <p>Actualmente este servidor no es compatible con esas plataformas.</p>
+            </li>
+            <li>
+                <h3>No es posible conectar</h3>
+                <p>Asegúrese de estar utilizando un la aplicación Minecraft versión Java (la versión para ordenadores)</p>
+                <p>Actualice su aplicación a la versión más reciente.</p>
+                <p>Otras posibles causas: usted no cuenta con una conexión a Internet | el servidor está teniendo dificultadoes | entre otras.</p>
+                <p>Contacte al administrador si el problema persiste.</p>
+            </li>
+        </ul>
+    </div>
+
+    <script type="text/javascript">
+        statusNameTag = document.getElementById("aws-status-name")
+        restartBtn = document.getElementById("submit")
+        passwordInput = document.getElementById("password")
+        wrongPasswordAlert = document.getElementById("wrong-password")
+        formElement = document.getElementById("restart-form")
+
+        switch ({{ server_data['statusCode'] }}) {
+            case 16:
+                statusNameTag.style.color = "green";
+                passwordInput.disabled = true;
+                restartBtn.disabled = true;
+                formElement.style.display = "none";
+                break;
+            case 80:
+                statusNameTag.style.color = "red";
+                break;
+            default:
+                statusNameTag.style.color = "gray";
+                passwordInput.disabled = true;
+                restartBtn.disabled = true;
+                formElement.style.display = "none";
+        }
+
+        const restartBtnListener = (e) => {
+            e.preventDefault();
+
+            restartBtn.disabled = true;
+
+            var myHeaders = new Headers();
+            myHeaders.append("start-server-password", passwordInput.value);
+
+            var requestOptions = {
+                method: 'GET',
+                headers: myHeaders,
+                redirect: 'follow'
+            };
+
+            fetch("http://127.0.0.1:5000/cloud/start", requestOptions)
+                .then(response => {
+                    if (!response.ok) {
+                        switch (response.status) {
+                            case 403:
+                                wrongPasswordAlert.style.display = "block";
+                                restartBtn.disabled = false;
+                                return response.text().then(text => {
+                                    throw new Error(text)
+                                });
+                                break;
+                            case 500:
+                                alert("Error en el servidor.")
+                                throw new Error("Error en el servidor.")
+                                break;
+                            default:
+                                return response.text().then(text => {
+                                    alert(text)
+                                    throw new Error(text)
+                                });
+                        }
+                    }
+                    response.text()
+                })
+                .then(result => {
+                    console.log(result)
+                    window.location.reload()
+                })
+                .catch(error => console.log('error: ', error));
+        }
+
+        formElement.addEventListener('submit', restartBtnListener)
+    </script>
+{% endblock %}
