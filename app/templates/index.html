@@ -99,7 +99,7 @@
                 redirect: 'follow'
             };
 
-            fetch("http://127.0.0.1:5000/cloud/start", requestOptions)
+            fetch("http://127.0.0.1:5000/cloud/start/", requestOptions)
                 .then(response => {
                     if (!response.ok) {
                         switch (response.status) {
